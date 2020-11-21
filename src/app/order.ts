@@ -6,8 +6,9 @@ export class Order {
         public dob: Date,
         public orderDate: Date,
         public orderType: string,
-        public paymentURL: string,
         public orderUnit: number,
+        public qrcodeURL?: string,
+        public bitcoinURL?: string,
         public totalAmt?: number
 
     ) {

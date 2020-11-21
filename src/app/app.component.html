@@ -5,7 +5,7 @@
 </mat-toolbar>
 
 <div class="card" fxLayoutAlign="center">
-  <form [formGroup]="form" (ngSubmit)="addOrder()">
+  <form [formGroup]="form" (ngSubmit)="addOrder()" #formDirective="ngForm">
     <mat-card>
       <div>
       <mat-form-field>
@@ -19,7 +19,7 @@
       <mat-form-field>
         <label for="contact">Contact: </label>
         <input matInput type="number" id="contact" formControlName="contact">
-        <mat-error *ngIf="form.get('contact').hasError('pattern')">Please input a valid Singapore Number</mat-error>
+        <mat-error *ngIf="form.get('contact').touched || form.get('contact').hasError('pattern') && form.get('contact').dirty">Please input a valid Singapore Number</mat-error>
         
       </mat-form-field>
     </div>
@@ -28,15 +28,17 @@
       <mat-radio-group aria-label="select gender" formControlName="gender">
         <mat-radio-button value="male">Male &nbsp;</mat-radio-button>
         <mat-radio-button value="female">Female &nbsp;</mat-radio-button>
+        <mat-error *ngIf="form.get('gender').invalid && (form.get('gender').dirty || form.get('gender').touched)">Please input your gender</mat-error>
       </mat-radio-group>
     </div>
 
     <div>
         <mat-form-field>
           <label>Date of Birth: </label>
-          <input matInput [matDatepicker]="dobPicker" formControlName="orderDate" [max]="today">
+          <input matInput [matDatepicker]="dobPicker" formControlName="dob" [max]="today">
           <mat-datepicker-toggle matSuffix [for]="dobPicker"></mat-datepicker-toggle>
           <mat-datepicker #dobPicker></mat-datepicker>
+          <mat-error *ngIf="form.get('dob').hasError('required')">Please input your date of birth</mat-error>
         </mat-form-field>
     </div>
 
@@ -46,6 +48,7 @@
         <input matInput [matDatepicker]="picker" formControlName="orderDate" [min]="today">
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="form.get('orderDate').hasError('required')">Date of order is required</mat-error>
       </mat-form-field>
     </div>
 
@@ -54,13 +57,19 @@
       <mat-radio-group aria-label="select order type" formControlName="orderType">
         <mat-radio-button value="buy">Buy &nbsp;</mat-radio-button>
         <div *ngIf="form.get('orderType').value == 'buy'">
-          <label>Input Paynow/Paylah QR Code URL: </label>
-          <input matInput type="text" formControlName="paymentUrl">
+          <mat-form-field>
+            <label>Input Paynow/Paylah QR Code URL: </label>
+            <input matInput type="url" formControlName="qrcodeURL">
+            <mat-error *ngIf="form.get('qrcodeURL').hasError('required') || form.get('qrcodeURL').hasError('pattern')">a valid QR Code URL is required for payment purposes</mat-error>
+        </mat-form-field>
         </div>
         <mat-radio-button value="sell">Sell &nbsp;</mat-radio-button>
         <div *ngIf="form.get('orderType').value == 'sell'">
-          <label>Input Bitcoin Address: </label>
-          <input matInput type="text" formControlName="paymentUrl"> 
+          <mat-form-field>
+            <label>Input Bitcoin Address: </label>
+            <input matInput type="url" formControlName="bitcoinURL"> 
+            <mat-error *ngIf="form.get('bitcoinURL').hasError('pattern') || form.get('bitcoinURL').touched || form.get('bitcoinURL').dirty">Bitcoin Address URL is required for payment purposes</mat-error>
+        </mat-form-field>
         </div>
       </mat-radio-group>
     </div>
@@ -69,6 +78,7 @@
       <mat-form-field>
         <label for="orderUnit">Order Unit: </label>
         <input matInput type="number" id="orderUnit" formControlName="orderUnit">
+        <mat-error *ngIf="form.get('orderUnit').invalid || form.get('orderUnit').touched || form.get('orderUnit').dirty">No. of units is required</mat-error>
       </mat-form-field>
     </div>
 
@@ -84,7 +94,7 @@
     <p></p>
     <div fxLayoutAlign="space-between start">
       <button type="submit" [disabled]='form.invalid'>Submit Order</button>
-      <button type="reset">Reset Order</button>
+      <button type="reset" (click)=resetForm()>Reset Order</button>
     </div>
       
     </mat-card>

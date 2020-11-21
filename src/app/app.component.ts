@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms'
+import { FormBuilder, FormGroup, FormControl, Validators, FormGroupDirective} from '@angular/forms'
 import { validSGNumber, validAge } from './valid.directives'
 import { Order } from './order'
 
@@ -23,13 +23,14 @@ export class AppComponent implements OnInit{
 
   //controls
   nameCtrl = new FormControl("", [Validators.required])
-  contactCtrl = new FormControl("", [Validators.required, Validators.pattern('^[6|8|9][1-9]{7}$')])
+  contactCtrl = new FormControl("", [Validators.required, Validators.pattern('^[\+65]?[6|8|9][1-9]{7}')])
   genderCtrl = new FormControl("", [Validators.required])
   dobCtrl = new FormControl("", [Validators.required])
   orderDateCtrl = new FormControl("", [Validators.required])
   orderTypeCtrl = new FormControl("", [Validators.required])
   orderUnitCtrl = new FormControl("", [Validators.required])
-  paymentUrlCtrl = new FormControl("", [Validators.required])
+  qrcodeURLCtrl = new FormControl("", [Validators.required, ])//Validators.pattern('^(https://')
+  bitcoinURL = new FormControl("", [Validators.required])
 
 
   constructor(private fb: FormBuilder) {
@@ -44,7 +45,8 @@ export class AppComponent implements OnInit{
       dob: this.dobCtrl,
       orderDate: this.orderDateCtrl,
       orderType: this.orderTypeCtrl,
-      paymentUrl: this.paymentUrlCtrl,
+      qrcodeURL: this.qrcodeURLCtrl,
+      bitcoinURL: this.bitcoinURL,
       orderUnit: this.orderUnitCtrl,
 
     })
@@ -58,10 +60,17 @@ export class AppComponent implements OnInit{
       this.form.value.dob,
       this.form.value.orderDate,
       this.form.value.orderType,
-      this.form.value.paymentUrl,
+      this.form.value.qrcodeURL,
+      this.form.value.bitcoinURL,
       this.form.value.orderUnit,
     )
     console.log(order)
     
+  }
+
+  resetForm(formDirective? : FormGroupDirective ){
+    this.form.reset()
+    formDirective.resetForm()
+
   }
 }
