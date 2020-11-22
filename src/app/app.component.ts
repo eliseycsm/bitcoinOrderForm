@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators, FormGroupDirective} from '@angular/forms'
-import { validSGNumber, validAge } from './valid.directives'
+import { validAge, validURL } from './valid.directives'
 import { Order } from './order'
 
 @Component({
@@ -25,17 +25,18 @@ export class AppComponent implements OnInit{
   nameCtrl = new FormControl("", [Validators.required])
   contactCtrl = new FormControl("", [Validators.required, Validators.pattern('^[\+65]?[6|8|9][1-9]{7}')])
   genderCtrl = new FormControl("", [Validators.required])
-  dobCtrl = new FormControl("", [Validators.required])
+  dobCtrl = new FormControl("", [Validators.required, validAge(21)])
   orderDateCtrl = new FormControl("", [Validators.required])
   orderTypeCtrl = new FormControl("", [Validators.required])
   orderUnitCtrl = new FormControl("", [Validators.required])
-  qrcodeURLCtrl = new FormControl("", [Validators.required, ])//Validators.pattern('^(https://')
-  bitcoinURL = new FormControl("", [Validators.required])
+  paymentURLCtrl = new FormControl("", [Validators.required, validURL()]) //Validators.pattern('^(https://')
+  
 
 
   constructor(private fb: FormBuilder) {
 
   }
+  genderArr = ["Male", "Female"]
 
   ngOnInit() {
     this.form = this.fb.group({
@@ -45,8 +46,7 @@ export class AppComponent implements OnInit{
       dob: this.dobCtrl,
       orderDate: this.orderDateCtrl,
       orderType: this.orderTypeCtrl,
-      qrcodeURL: this.qrcodeURLCtrl,
-      bitcoinURL: this.bitcoinURL,
+      paymentURL: this.paymentURLCtrl,
       orderUnit: this.orderUnitCtrl,
 
     })
@@ -60,13 +60,14 @@ export class AppComponent implements OnInit{
       this.form.value.dob,
       this.form.value.orderDate,
       this.form.value.orderType,
-      this.form.value.qrcodeURL,
-      this.form.value.bitcoinURL,
+      this.form.value.paymentURL,
       this.form.value.orderUnit,
     )
     console.log(order)
     
   }
+
+  
 
   resetForm(formDirective? : FormGroupDirective ){
     this.form.reset()

@@ -4,31 +4,29 @@
   </mat-toolbar-row>
 </mat-toolbar>
 
-<div class="card" fxLayoutAlign="center">
+<div class="card" fxLayout="column">
   <form [formGroup]="form" (ngSubmit)="addOrder()" #formDirective="ngForm">
     <mat-card>
       <div>
       <mat-form-field>
         <label for="name">Name: </label>
-        <input matInput id="name" formControlName="name">
-        <mat-error *ngIf="form.get('name').hasError('required')">Please input your name</mat-error>
+        <input matInput id="name" formControlName="name" placeholder="Please input your name">
+        <mat-error *ngIf="nameCtrl.hasError('required')">Name is required</mat-error>
 
       </mat-form-field>  
     </div>
     <div>
       <mat-form-field>
         <label for="contact">Contact: </label>
-        <input matInput type="number" id="contact" formControlName="contact">
-        <mat-error *ngIf="form.get('contact').touched || form.get('contact').hasError('pattern') && form.get('contact').dirty">Please input a valid Singapore Number</mat-error>
-        
+        <input matInput type="number" id="contact" formControlName="contact" placeholder="Eg. 9XXXXXXX">
+        <mat-error *ngIf="contactCtrl.touched || contactCtrl.hasError('pattern') && contactCtrl.dirty">Please input a valid Singapore Number</mat-error>
       </mat-form-field>
     </div>
     <div>
       <label>Gender: </label>
       <mat-radio-group aria-label="select gender" formControlName="gender">
-        <mat-radio-button value="male">Male &nbsp;</mat-radio-button>
-        <mat-radio-button value="female">Female &nbsp;</mat-radio-button>
-        <mat-error *ngIf="form.get('gender').invalid && (form.get('gender').dirty || form.get('gender').touched)">Please input your gender</mat-error>
+        <mat-radio-button *ngFor='let x of genderArr' value="{{x}}">{{x}} &nbsp;</mat-radio-button>
+        <mat-error *ngIf="genderCtrl.invalid && (genderCtrl.dirty || genderCtrl.touched)">Please input your gender</mat-error>
       </mat-radio-group>
     </div>
 
@@ -38,7 +36,9 @@
           <input matInput [matDatepicker]="dobPicker" formControlName="dob" [max]="today">
           <mat-datepicker-toggle matSuffix [for]="dobPicker"></mat-datepicker-toggle>
           <mat-datepicker #dobPicker></mat-datepicker>
-          <mat-error *ngIf="form.get('dob').hasError('required')">Please input your date of birth</mat-error>
+          <mat-error *ngIf="dobCtrl.hasError('invalidAge')">You need to be over 21</mat-error>
+          <mat-error *ngIf="dobCtrl.hasError('required')">Please input your date of birth</mat-error>
+          <mat-error *ngIf="dobCtrl.invalid">Date entered is invalid</mat-error>
         </mat-form-field>
     </div>
 
@@ -48,29 +48,29 @@
         <input matInput [matDatepicker]="picker" formControlName="orderDate" [min]="today">
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
-        <mat-error *ngIf="form.get('orderDate').hasError('required')">Date of order is required</mat-error>
+        <mat-error *ngIf="orderDateCtrl.hasError('required')">Date of order is required</mat-error>
+        <mat-error *ngIf="orderDateCtrl.invalid">Date entered is invalid</mat-error>
       </mat-form-field>
     </div>
 
     <div>
       <label>Order Type: </label>
-      <mat-radio-group aria-label="select order type" formControlName="orderType">
-        <mat-radio-button value="buy">Buy &nbsp;</mat-radio-button>
-        <div *ngIf="form.get('orderType').value == 'buy'">
-          <mat-form-field>
+      <mat-radio-group aria-label="select order type" formControlName="orderType" fxLayout="row">
+        <mat-radio-button value="buy" (click)="form.controls['paymentURL'].reset()">Buy &nbsp;</mat-radio-button>
+          <mat-form-field *ngIf="form.get('orderType').value == 'buy'">
             <label>Input Paynow/Paylah QR Code URL: </label>
-            <input matInput type="url" formControlName="qrcodeURL">
-            <mat-error *ngIf="form.get('qrcodeURL').hasError('required') || form.get('qrcodeURL').hasError('pattern')">a valid QR Code URL is required for payment purposes</mat-error>
+            <input matInput type="url" formControlName="paymentURL" placeholder="Enter your QR Code Url">
+            <mat-error *ngIf="paymentURLCtrl.hasError('required')">QR Code URL is required for payment</mat-error>
+            <mat-error *ngIf="paymentURLCtrl.hasError('invalidURL')">a valid URL is required for payment purposes</mat-error>
         </mat-form-field>
-        </div>
-        <mat-radio-button value="sell">Sell &nbsp;</mat-radio-button>
-        <div *ngIf="form.get('orderType').value == 'sell'">
-          <mat-form-field>
+        
+        <mat-radio-button value="sell" (click)="form.controls['paymentURL'].reset()">Sell &nbsp;</mat-radio-button>
+          <mat-form-field *ngIf="form.get('orderType').value == 'sell'">
             <label>Input Bitcoin Address: </label>
-            <input matInput type="url" formControlName="bitcoinURL"> 
-            <mat-error *ngIf="form.get('bitcoinURL').hasError('pattern') || form.get('bitcoinURL').touched || form.get('bitcoinURL').dirty">Bitcoin Address URL is required for payment purposes</mat-error>
+            <input matInput type="url" formControlName="paymentURL" placeholder="Enter your BitCoin address Url"> 
+            <mat-error *ngIf="form.get('paymentURL').hasError('required')">Bitcoin Address URL is required for payment purposes</mat-error>
+            <mat-error *ngIf="paymentURLCtrl.hasError('invalidURL')">a valid URL is required for payment purposes</mat-error>
         </mat-form-field>
-        </div>
       </mat-radio-group>
     </div>
 
@@ -89,7 +89,7 @@
     </div>
 
     <div>
-      <label for="totalAmt">Total Amount: </label>
+      <label for="totalAmt">Total Amount: {{totalCost}}</label>
     </div>
     <p></p>
     <div fxLayoutAlign="space-between start">
