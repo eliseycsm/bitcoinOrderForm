@@ -4,27 +4,31 @@
   </mat-toolbar-row>
 </mat-toolbar>
 
-<div class="card" fxLayout="column">
+<div fxLayout="column"> 
   <form [formGroup]="form" (ngSubmit)="addOrder()" #formDirective="ngForm">
     <mat-card>
-      <div>
-      <mat-form-field>
-        <label for="name">Name: </label>
-        <input matInput id="name" formControlName="name" placeholder="Please input your name">
-        <mat-error *ngIf="nameCtrl.hasError('required')">Name is required</mat-error>
 
+      <div> 
+        <mat-form-field fxLayout="row" fxFlex="auto" fxLayoutGap="10px">
+        <mat-label for="name">Name: </mat-label>
+        <input matInput id="name" formControlName="name">
+        <mat-hint>Please input your name</mat-hint>
+        <mat-error *ngIf="nameCtrl.hasError('required')">Name is required</mat-error>
       </mat-form-field>  
     </div>
+
     <div>
-      <mat-form-field>
-        <label for="contact">Contact: </label>
-        <input matInput type="number" id="contact" formControlName="contact" placeholder="Eg. 9XXXXXXX">
-        <mat-error *ngIf="contactCtrl.touched || contactCtrl.hasError('pattern') && contactCtrl.dirty">Please input a valid Singapore Number</mat-error>
+      <mat-form-field fxLayout="row" fxFlex="auto">
+        <mat-label for="contact">Contact: </mat-label>
+        <input matInput type="text" id="contact" formControlName="contact" placeholder="Eg. 9XXXXXXX">
+        <mat-error *ngIf="contactCtrl.hasError('required')">Contact number is required</mat-error>
+        <mat-error *ngIf="contactCtrl.hasError('pattern')">Please input a valid SG number</mat-error>
       </mat-form-field>
     </div>
+
     <div>
-      <label>Gender: </label>
-      <mat-radio-group aria-label="select gender" formControlName="gender">
+        <mat-radio-group aria-label="select gender" formControlName="gender" fxFlex="auto">
+        <mat-label>Gender: </mat-label>
         <mat-radio-button *ngFor='let x of genderArr' value="{{x}}">{{x}} &nbsp;</mat-radio-button>
         <mat-error *ngIf="genderCtrl.invalid && (genderCtrl.dirty || genderCtrl.touched)">Please input your gender</mat-error>
       </mat-radio-group>
@@ -77,7 +81,7 @@
     <div>
       <mat-form-field>
         <label for="orderUnit">Order Unit: </label>
-        <input matInput type="number" id="orderUnit" formControlName="orderUnit">
+        <input matInput type="number" id="orderUnit" formControlName="orderUnit" (keyup)='calcTotalAmt($event)'> 
         <mat-error *ngIf="form.get('orderUnit').invalid || form.get('orderUnit').touched || form.get('orderUnit').dirty">No. of units is required</mat-error>
       </mat-form-field>
     </div>
@@ -89,7 +93,7 @@
     </div>
 
     <div>
-      <label for="totalAmt">Total Amount: {{totalCost}}</label>
+      <label>Total Amount: S${{totalCost}}</label>
     </div>
     <p></p>
     <div fxLayoutAlign="space-between start">

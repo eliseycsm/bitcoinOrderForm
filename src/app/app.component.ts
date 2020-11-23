@@ -14,16 +14,16 @@ export class AppComponent implements OnInit{
   //configurations
   form: FormGroup
   age: Date
-  btcRate: string = "1.2" //http GET required
+  btcRate: number = 1.2 //http GET required
   today = new Date()
   buyOrder: boolean = false
   sellOrder: boolean = false
-  totalCost: number
+  totalCost: number = 0
 
 
   //controls
   nameCtrl = new FormControl("", [Validators.required])
-  contactCtrl = new FormControl("", [Validators.required, Validators.pattern('^[\+65]?[6|8|9][1-9]{7}')])
+  contactCtrl = new FormControl("", [Validators.required, Validators.pattern('^[\+65]?[6|8|9][1-9]{7}')]) //need to include () & -
   genderCtrl = new FormControl("", [Validators.required])
   dobCtrl = new FormControl("", [Validators.required, validAge(21)])
   orderDateCtrl = new FormControl("", [Validators.required])
@@ -50,6 +50,12 @@ export class AppComponent implements OnInit{
       orderUnit: this.orderUnitCtrl,
 
     })
+
+  }
+
+  calcTotalAmt($event){
+    let units = $event.target.value
+    this.totalCost = units * this.btcRate
   }
 
   addOrder(){
